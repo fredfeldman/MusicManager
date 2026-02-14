@@ -32,7 +32,11 @@
             fileToolStripMenuItem = new ToolStripMenuItem();
             addFolderToolStripMenuItem = new ToolStripMenuItem();
             addFilesToolStripMenuItem = new ToolStripMenuItem();
+            scanDefaultFolderToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
+            rescanLibraryToolStripMenuItem = new ToolStripMenuItem();
+            cleanupMissingFilesToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator3 = new ToolStripSeparator();
             preferencesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator2 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
@@ -83,7 +87,7 @@
             // 
             // fileToolStripMenuItem
             // 
-            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addFolderToolStripMenuItem, addFilesToolStripMenuItem, toolStripSeparator1, preferencesToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
+            fileToolStripMenuItem.DropDownItems.AddRange(new ToolStripItem[] { addFolderToolStripMenuItem, addFilesToolStripMenuItem, scanDefaultFolderToolStripMenuItem, toolStripSeparator1, rescanLibraryToolStripMenuItem, cleanupMissingFilesToolStripMenuItem, toolStripSeparator3, preferencesToolStripMenuItem, toolStripSeparator2, exitToolStripMenuItem });
             fileToolStripMenuItem.Name = "fileToolStripMenuItem";
             fileToolStripMenuItem.Size = new Size(37, 20);
             fileToolStripMenuItem.Text = "&File";
@@ -91,38 +95,64 @@
             // addFolderToolStripMenuItem
             // 
             addFolderToolStripMenuItem.Name = "addFolderToolStripMenuItem";
-            addFolderToolStripMenuItem.Size = new Size(180, 22);
+            addFolderToolStripMenuItem.Size = new Size(210, 22);
             addFolderToolStripMenuItem.Text = "Add &Folder...";
             addFolderToolStripMenuItem.Click += addFolderToolStripMenuItem_Click;
             // 
             // addFilesToolStripMenuItem
             // 
             addFilesToolStripMenuItem.Name = "addFilesToolStripMenuItem";
-            addFilesToolStripMenuItem.Size = new Size(180, 22);
+            addFilesToolStripMenuItem.Size = new Size(210, 22);
             addFilesToolStripMenuItem.Text = "Add F&iles...";
             addFilesToolStripMenuItem.Click += addFilesToolStripMenuItem_Click;
+            // 
+            // scanDefaultFolderToolStripMenuItem
+            // 
+            scanDefaultFolderToolStripMenuItem.Name = "scanDefaultFolderToolStripMenuItem";
+            scanDefaultFolderToolStripMenuItem.Size = new Size(210, 22);
+            scanDefaultFolderToolStripMenuItem.Text = "&Scan Default Folder";
+            scanDefaultFolderToolStripMenuItem.Click += scanDefaultFolderToolStripMenuItem_Click;
             // 
             // toolStripSeparator1
             // 
             toolStripSeparator1.Name = "toolStripSeparator1";
-            toolStripSeparator1.Size = new Size(177, 6);
+            toolStripSeparator1.Size = new Size(207, 6);
+            // 
+            // rescanLibraryToolStripMenuItem
+            // 
+            rescanLibraryToolStripMenuItem.Name = "rescanLibraryToolStripMenuItem";
+            rescanLibraryToolStripMenuItem.Size = new Size(210, 22);
+            rescanLibraryToolStripMenuItem.Text = "&Rescan Library";
+            rescanLibraryToolStripMenuItem.Click += rescanLibraryToolStripMenuItem_Click;
+            // 
+            // cleanupMissingFilesToolStripMenuItem
+            // 
+            cleanupMissingFilesToolStripMenuItem.Name = "cleanupMissingFilesToolStripMenuItem";
+            cleanupMissingFilesToolStripMenuItem.Size = new Size(210, 22);
+            cleanupMissingFilesToolStripMenuItem.Text = "&Cleanup Missing Files";
+            cleanupMissingFilesToolStripMenuItem.Click += cleanupMissingFilesToolStripMenuItem_Click;
+            // 
+            // toolStripSeparator3
+            // 
+            toolStripSeparator3.Name = "toolStripSeparator3";
+            toolStripSeparator3.Size = new Size(207, 6);
             // 
             // preferencesToolStripMenuItem
             // 
             preferencesToolStripMenuItem.Name = "preferencesToolStripMenuItem";
-            preferencesToolStripMenuItem.Size = new Size(180, 22);
+            preferencesToolStripMenuItem.Size = new Size(210, 22);
             preferencesToolStripMenuItem.Text = "&Preferences...";
             preferencesToolStripMenuItem.Click += preferencesToolStripMenuItem_Click;
             // 
             // toolStripSeparator2
             // 
             toolStripSeparator2.Name = "toolStripSeparator2";
-            toolStripSeparator2.Size = new Size(177, 6);
+            toolStripSeparator2.Size = new Size(207, 6);
             // 
             // exitToolStripMenuItem
             // 
             exitToolStripMenuItem.Name = "exitToolStripMenuItem";
-            exitToolStripMenuItem.Size = new Size(180, 22);
+            exitToolStripMenuItem.Size = new Size(210, 22);
             exitToolStripMenuItem.Text = "E&xit";
             exitToolStripMenuItem.Click += exitToolStripMenuItem_Click;
             // 
@@ -392,7 +422,11 @@
         private ToolStripMenuItem fileToolStripMenuItem;
         private ToolStripMenuItem addFolderToolStripMenuItem;
         private ToolStripMenuItem addFilesToolStripMenuItem;
+        private ToolStripMenuItem scanDefaultFolderToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator1;
+        private ToolStripMenuItem rescanLibraryToolStripMenuItem;
+        private ToolStripMenuItem cleanupMissingFilesToolStripMenuItem;
+        private ToolStripSeparator toolStripSeparator3;
         private ToolStripMenuItem preferencesToolStripMenuItem;
         private ToolStripSeparator toolStripSeparator2;
         private ToolStripMenuItem exitToolStripMenuItem;

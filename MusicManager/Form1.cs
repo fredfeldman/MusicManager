@@ -2,6 +2,7 @@ namespace MusicManager
 {
     public partial class Form1 : Form
     {
+        private MusicDatabase musicDatabase;
         private MusicLibrary musicLibrary;
         private AudioPlayer audioPlayer;
         private MusicTrack? currentTrack;
@@ -13,7 +14,8 @@ namespace MusicManager
             InitializeComponent();
 
             appSettings = AppSettings.Load();
-            musicLibrary = new MusicLibrary();
+            musicDatabase = new MusicDatabase();
+            musicLibrary = new MusicLibrary(musicDatabase);
             audioPlayer = new AudioPlayer();
 
             audioPlayer.PositionChanged += AudioPlayer_PositionChanged;
@@ -90,27 +92,29 @@ namespace MusicManager
 
                 if (dialog.ShowDialog() == DialogResult.OK)
                 {
-                    toolStripStatusLabel.Text = "Scanning folder...";
-                    Application.DoEvents();
-
-                    var progress = new Progress<string>(msg => 
-                    {
-                        toolStripStatusLabel.Text = msg;
-                        Application.DoEvents();
-                    });
-
-                    var tracks = MusicScanner.ScanFolder(dialog.SelectedPath, progress);
-
-                    foreach (var track in tracks)
-                    {
-                        musicLibrary.AddTrack(track);
-                    }
-
-                    UpdateTrackList();
-                    UpdateTreeView();
-                    toolStripStatusLabel.Text = $"Added {tracks.Count} tracks";
+                    ScanFolder(dialog.SelectedPath);
                 }
             }
+        }
+
+        private void ScanFolder(string folderPath)
+        {
+            toolStripStatusLabel.Text = "Scanning folder...";
+            Application.DoEvents();
+
+            var progress = new Progress<string>(msg =>
+            {
+                toolStripStatusLabel.Text = msg;
+                Application.DoEvents();
+            });
+
+            var tracks = MusicScanner.ScanFolder(folderPath, progress);
+            musicLibrary.AddTracks(tracks);
+            musicDatabase.AddScanLocation(folderPath);
+
+            UpdateTrackList();
+            UpdateTreeView();
+            toolStripStatusLabel.Text = $"Added {tracks.Count} tracks from {folderPath}";
         }
 
         private void addFilesToolStripMenuItem_Click(object sender, EventArgs e)
@@ -216,6 +220,8 @@ namespace MusicManager
                 trackBarPosition.Maximum = (int)audioPlayer.Duration.TotalSeconds;
 
                 toolStripStatusLabel.Text = $"Playing: {track.Title}";
+
+                musicLibrary.UpdatePlayCount(track.FilePath);
             }
             catch (Exception ex)
             {
@@ -314,6 +320,88 @@ namespace MusicManager
         private void Form1_FormClosing(object sender, FormClosingEventArgs e)
         {
             audioPlayer?.Dispose();
+            musicDatabase?.Dispose();
+        }
+
+        private void scanDefaultFolderToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            if (string.IsNullOrEmpty(appSettings.DefaultMusicFolder))
+            {
+                MessageBox.Show("No default music folder is set. Please set one in Preferences.", 
+                    "No Default Folder", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                return;
+            }
+
+            if (!Directory.Exists(appSettings.DefaultMusicFolder))
+            {
+                MessageBox.Show($"The default music folder does not exist:\n{appSettings.DefaultMusicFolder}", 
+                    "Folder Not Found", MessageBoxButtons.OK, MessageBoxIcon.Warning);
+                return;
+            }
+
+            ScanFolder(appSettings.DefaultMusicFolder);
+        }
+
+        private void rescanLibraryToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "This will rescan all previously scanned locations. This may take some time. Continue?",
+                "Rescan Library",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                var locations = musicDatabase.GetScanLocations();
+                if (locations.Count == 0)
+                {
+                    MessageBox.Show("No scan locations found. Please add folders first.", 
+                        "No Locations", MessageBoxButtons.OK, MessageBoxIcon.Information);
+                    return;
+                }
+
+                int totalTracksAdded = 0;
+                foreach (var location in locations)
+                {
+                    if (Directory.Exists(location))
+                    {
+                        var progress = new Progress<string>(msg =>
+                        {
+                            toolStripStatusLabel.Text = msg;
+                            Application.DoEvents();
+                        });
+
+                        var tracks = MusicScanner.ScanFolder(location, progress);
+                        musicLibrary.AddTracks(tracks);
+                        totalTracksAdded += tracks.Count;
+                    }
+                }
+
+                UpdateTrackList();
+                UpdateTreeView();
+                toolStripStatusLabel.Text = $"Rescan complete. Processed {totalTracksAdded} tracks from {locations.Count} locations";
+            }
+        }
+
+        private void cleanupMissingFilesToolStripMenuItem_Click(object sender, EventArgs e)
+        {
+            var result = MessageBox.Show(
+                "This will remove tracks from the database whose files no longer exist. Continue?",
+                "Cleanup Missing Files",
+                MessageBoxButtons.YesNo,
+                MessageBoxIcon.Question);
+
+            if (result == DialogResult.Yes)
+            {
+                toolStripStatusLabel.Text = "Cleaning up missing files...";
+                Application.DoEvents();
+
+                musicLibrary.RemoveMissingTracks();
+
+                UpdateTrackList();
+                UpdateTreeView();
+                toolStripStatusLabel.Text = $"Cleanup complete. {musicDatabase.GetTrackCount()} tracks remaining";
+            }
         }
     }
 }
