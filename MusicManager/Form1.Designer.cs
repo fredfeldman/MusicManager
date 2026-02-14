@@ -33,6 +33,8 @@
             addFolderToolStripMenuItem = new ToolStripMenuItem();
             addFilesToolStripMenuItem = new ToolStripMenuItem();
             toolStripSeparator1 = new ToolStripSeparator();
+            preferencesToolStripMenuItem = new ToolStripMenuItem();
+            toolStripSeparator2 = new ToolStripSeparator();
             exitToolStripMenuItem = new ToolStripMenuItem();
             splitContainer = new SplitContainer();
             treeView = new TreeView();
